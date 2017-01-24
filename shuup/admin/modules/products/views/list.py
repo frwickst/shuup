@@ -35,6 +35,10 @@ class ProductListView(PicotableListView):
     default_columns = [
         Column("primary_image", _(u"Primary Image"),
                display="get_primary_image", class_name="text-center", raw=True, ordering=1, sortable=False),
+        Column(
+            "shop", _("Shop"),
+            filter_config=ChoicesFilter(choices=Shop.objects.all()),
+            ordering=2),
         Column("name", _(u"Name"),
                sort_field="product__translations__name",
                display="product__name",
@@ -70,8 +74,7 @@ class ProductListView(PicotableListView):
 
     def get_queryset(self):
         filter = self.get_filter()
-        shop_id = filter.get("shop", Shop.objects.first().pk)
-        qs = ShopProduct.objects.filter(product__deleted=False, shop_id=shop_id)
+        qs = ShopProduct.objects.filter(product__deleted=False)
         q = Q()
         for mode in filter.get("modes", []):
             q |= Q(product__mode=mode)
