@@ -360,6 +360,7 @@ class Product(TaxableItem, AttributableMixin, TranslatableModel):
 
     class Meta:
         ordering = ('-id',)
+        permissions = (('view_product', 'Can view products'),)
         verbose_name = _('product')
         verbose_name_plural = _('products')
 

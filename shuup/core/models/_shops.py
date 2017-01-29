@@ -91,6 +91,11 @@ class Shop(ChangeProtected, TranslatableShuupModel):
         )
     )
 
+    class Meta:
+        permissions = (('view_shop', 'Can view shops'),)
+        verbose_name = _('shop')
+        verbose_name_plural = _('shops')
+
     def __str__(self):
         return self.safe_translation_getter("name", default="Shop %d" % self.pk)
 

@@ -150,6 +150,7 @@ class Category(MPTTModel, TranslatableModel):
 
     class Meta:
         ordering = ('tree_id', 'lft')
+        permissions = (('view_category', 'Can view categories'),)
         verbose_name = _('category')
         verbose_name_plural = _('categories')
 

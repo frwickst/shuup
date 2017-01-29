@@ -76,6 +76,7 @@ class Shipment(models.Model):
     objects = ShipmentManager()
 
     class Meta:
+        permissions = (('view_shipment', 'Can view shipments'),)
         verbose_name = _('shipment')
         verbose_name_plural = _('shipments')
 
