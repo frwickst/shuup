@@ -7,15 +7,20 @@
 # LICENSE file in the root directory of this source tree.
 from __future__ import unicode_literals
 
+from collections import defaultdict, OrderedDict
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group as PermissionGroup
+from django.contrib.auth.models import Permission
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 
 from shuup.admin.forms.fields import Select2MultipleField
 from shuup.admin.module_registry import get_modules
-from shuup.admin.utils.permissions import get_permission_object_from_string
+from shuup.admin.utils.permissions import (
+    get_permission_object_from_string, get_permissions_from_urls
+)
 from shuup.admin.utils.views import CreateOrUpdateView
 
 
@@ -28,16 +33,6 @@ class PermissionGroupForm(forms.ModelForm):
         super(PermissionGroupForm, self).__init__(*args, **kwargs)
         initial_permissions = self._get_initial_permissions()
         self.fields["name"].help_text = _("The permission group name.")
-        self.fields["modules"] = forms.MultipleChoiceField(
-            choices=sorted(self._get_module_choices()),
-            initial=self._get_enabled_modules(initial_permissions),
-            required=False,
-            label=_("Module Permissions"),
-            help_text=_(
-                "Select the modules that should be accessible by this permission group. "
-                "Modules with the same permissions as selected modules will be added automatically."
-            )
-        )
         initial_members = self._get_initial_members()
         members_field = Select2MultipleField(
             model=get_user_model(),
@@ -51,8 +46,27 @@ class PermissionGroupForm(forms.ModelForm):
         members_field.widget.choices = [(member.pk, force_text(member)) for member in initial_members]
         self.fields["members"] = members_field
 
+        permission_code_to_name = {}
+        for permission in Permission.objects.all():
+            permission_code_to_name[
+                "%s.%s" % (permission.content_type.app_label, permission.codename)] = permission.name
+
+        self.module_permissions = defaultdict(list)
+        for module in self._get_module_choices():
+            for module_permission in get_permissions_from_urls(module.get_urls()):
+                field = forms.BooleanField(
+                    initial=bool(module_permission == initial_permissions),
+                    label=permission_code_to_name[module_permission],
+                    required=False
+                )
+                self.module_permissions[module.name].append(module_permission)
+                self.fields[module_permission] = field
+
+    def get_module_permissions(self):
+        return OrderedDict(sorted(self.module_permissions.items()))
+
     def _get_module_choices(self):
-        return set((force_text(m.name), force_text(m.name)) for m in get_modules() if m.name != "_Base_")
+        return [m for m in get_modules() if m.name != "_Base_"]
 
     def _get_initial_members(self):
         if self.instance.pk:
@@ -66,23 +80,6 @@ class PermissionGroupForm(forms.ModelForm):
             for perm in self.instance.permissions.all():
                 name, module, _ = perm.natural_key()
                 permissions.add("%s.%s" % (module, name))
-        return permissions
-
-    def _get_enabled_modules(self, permissions):
-        if not self.instance.pk:
-            return []
-        permissions = set(permissions)
-        modules = []
-        for module in get_modules():
-            # Ignore modules that haven't configured a name
-            if module.name != "_Base_" and set(module.get_required_permissions()).issubset(permissions):
-                modules.append(force_text(module.name))
-        return modules
-
-    def _get_required_permissions(self, modules):
-        permissions = set()
-        for module in [m for m in get_modules() if m.name in modules]:
-            permissions.update(set(module.get_required_permissions()))
         return permissions
 
     def clean_members(self):
