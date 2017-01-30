@@ -89,6 +89,7 @@ REQUIRES = [
     'django-mptt>=0.8.0,<0.9',
     'django-parler>=1.5,<1.6.3',
     'django-parler-rest>=1.3a1,<2',
+    'django-permission<1.0',
     'django-polymorphic>=0.8.0,<0.10',
     'django-registration-redux>=1.2,<2',
     'django-timezone-field>=1.2,<2',

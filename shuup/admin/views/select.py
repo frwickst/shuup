@@ -17,6 +17,7 @@ from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView
 
+from shuup.admin.utils.permissions import user_has_permission
 from shuup.core.models import Carrier, Contact, Product
 
 
@@ -87,7 +88,11 @@ class MultiselectAjaxView(TemplateView):
             if issubclass(cls, Contact) or issubclass(cls, get_user_model()):
                 query &= Q(is_active=True)
             qs = qs.filter(query).distinct()
-        return [{"id": obj.id, "name": force_text(obj)} for obj in qs[:self.result_limit]]
+
+        return [
+            {"id": obj.id, "name": force_text(obj)} for obj in qs[:self.result_limit]
+            if user_has_permission("view", self.request.user, obj)
+        ]
 
     def get(self, request, *args, **kwargs):
         return JsonResponse({"results": self.get_data(request, *args, **kwargs)})
