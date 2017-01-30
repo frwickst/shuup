@@ -33,7 +33,7 @@ from shuup.admin.utils.urls import (
 from shuup.admin.views.home import HelpBlockCategory, SimpleHelpBlock
 from shuup.core.models import (
     Product, ProductCrossSell, ProductPackageLink, ProductVariationResult,
-    Shop, ShopProduct
+    ShopProduct
 )
 
 
@@ -167,7 +167,7 @@ class ProductModule(AdminModule):
 
     def get_model_url(self, object, kind):
         if isinstance(object, Product):
-            shop = Shop.objects.first()
+            shop = self.request.session.get("admin_shop")
             object = object.get_shop_instance(shop)
         return derive_model_url(ShopProduct, "shuup_admin:shop_product", object, kind)
 

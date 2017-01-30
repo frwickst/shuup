@@ -53,7 +53,7 @@ class ShopModule(AdminModule):
 
     def get_help_blocks(self, request, kind):
         if kind == "setup":
-            shop = Shop.objects.first()
+            shop = request.session.get("admin_shop")
             yield SimpleHelpBlock(
                 text=_("Add a logo to make your store stand out"),
                 actions=[{

@@ -180,6 +180,7 @@ class OrderModule(AdminModule):
 
     def get_notifications(self, request):
         old_open_orders = Order.objects.filter(
+            shop=request.session.get("admin_shop"),
             status__role=OrderStatusRole.INITIAL,
             order_date__lt=now() - timedelta(days=4)
         ).count()

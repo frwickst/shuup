@@ -11,7 +11,6 @@ from django.conf import settings
 
 from shuup import configuration
 from shuup.admin.views.wizard import TemplatedWizardFormDef
-from shuup.core.models import Shop
 
 from .wizard_forms import ManualPaymentWizardForm, ManualShippingWizardForm
 
@@ -24,7 +23,7 @@ class ServiceWizardFormDef(TemplatedWizardFormDef):
             "name": name,
             "kwargs": {
                 "instance": form_class._meta.model.objects.first(),
-                "languages": configuration.get(Shop.objects.first(), "languages", settings.LANGUAGES)
+                "languages": configuration.get(self.request.session.get("admin_shop"), "languages", settings.LANGUAGES)
             }
         }
         super(ServiceWizardFormDef, self).__init__(

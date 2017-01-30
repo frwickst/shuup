@@ -85,7 +85,10 @@ class ShopProductFormPart(FormPart):
 
     def __init__(self, request, object=None):
         super(ShopProductFormPart, self).__init__(request, object)
-        self.shops = Shop.objects.filter(status=ShopStatus.ENABLED)
+        shop_queryset = Shop.objects.filter(status=ShopStatus.ENABLED)
+        if getattr(self.request.user, "is_superuser", False):
+            shop_queryset = shop_queryset.filter(staff_members=self.request.user)
+        self.shops = shop_queryset
 
     def get_shop_instance(self, shop):
         try:
