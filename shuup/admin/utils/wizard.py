@@ -9,7 +9,6 @@ from django.conf import settings
 
 from shuup import configuration
 from shuup.admin.module_registry import get_modules
-from shuup.core.models import Shop
 from shuup.utils.importing import load
 
 
@@ -49,7 +48,7 @@ def load_setup_wizard_pane(shop, request, pane_id):
             return pane_inst
 
 
-def setup_wizard_complete():
+def setup_wizard_complete(request):
     """
     Check if shop wizard should be run.
 
@@ -59,7 +58,7 @@ def setup_wizard_complete():
     if getattr(settings, "SHUUP_ENABLE_MULTIPLE_SHOPS", False):
         # setup wizard is only applicable in single shop mode
         return True
-    shop = Shop.objects.first()
+    shop = request.session.get("admin_shop")
     complete = configuration.get(shop, "setup_wizard_complete")
     if complete is None:
         return not setup_wizard_visible_panes(shop)
@@ -96,4 +95,4 @@ def onboarding_complete(request):
     :return: whether onboarding is complete
     :rtype: Boolean
     """
-    return setup_wizard_complete() and setup_blocks_complete(request)
+    return setup_wizard_complete(request) and setup_blocks_complete(request)

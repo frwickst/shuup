@@ -72,7 +72,7 @@ class WizardView(TemplateView):
 
     @cached_property
     def panes(self):
-        shop = Shop.objects.first()
+        shop = self.request.session.get("admin_shop")
         pane_id = self.request.GET.get("pane_id", None)
         panes = load_setup_wizard_panes(
             shop=shop,

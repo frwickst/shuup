@@ -16,8 +16,7 @@ from shuup.admin.forms.fields import Select2MultipleField
 from shuup.admin.forms.widgets import TextEditorWidget
 from shuup.admin.utils.forms import filter_form_field_choices
 from shuup.core.models import (
-    Category, CategoryStatus, Product, Shop, ShopProduct,
-    ShopProductVisibility
+    Category, CategoryStatus, Product, ShopProduct, ShopProductVisibility
 )
 
 
@@ -44,12 +43,8 @@ class CategoryBaseForm(ShuupAdminForm):
             "description": TextEditorWidget()
         }
 
-    def __init__(self, **kwargs):
-        if not settings.SHUUP_ENABLE_MULTIPLE_SHOPS:
-            initial = kwargs.get("initial", {})
-            initial["shops"] = [Shop.objects.first().pk]
-            kwargs["initial"] = initial
-
+    def __init__(self, request, **kwargs):
+        self.request = request
         super(CategoryBaseForm, self).__init__(**kwargs)
         # Exclude `DELETED`. We don't want people to use that field to set a category as deleted.
         filter_form_field_choices(self.fields["status"], (CategoryStatus.DELETED.value,), invert=True)
@@ -60,11 +55,12 @@ class CategoryBaseForm(ShuupAdminForm):
         if not settings.SHUUP_ENABLE_MULTIPLE_SHOPS:
             self.fields["shops"].disabled = True
 
+
     def clean_shops(self):
         shops = self.cleaned_data["shops"]
         if settings.SHUUP_ENABLE_MULTIPLE_SHOPS:
-            return shops
-        return [Shop.objects.first().pk]
+            return shops if shops else [self.request.session.get("admin_shop")]
+        return [self.request.session.get("admin_shop")]
 
 
 class CategoryProductForm(forms.Form):

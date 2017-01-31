@@ -161,6 +161,7 @@ class ShopProduct(MoneyPropped, models.Model):
     )
 
     class Meta:
+        permissions = (('view_shopproduct', 'Can view shop products'),)
         unique_together = (("shop", "product",),)
 
     def save(self, *args, **kwargs):
