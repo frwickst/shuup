@@ -34,7 +34,7 @@ class ServiceWizardFormPartMixin(object):
     def _get_service_provider_form_defs(self):
         form_defs = []
         for form_def in get_provide_objects(self.form_def_provide_key):
-            inst = form_def()
+            inst = form_def(request=self.request)
             if inst.visible():
                 form_defs.append(inst)
         form_defs.sort(key=lambda form_def: getattr(form_def, "priority", 0))
