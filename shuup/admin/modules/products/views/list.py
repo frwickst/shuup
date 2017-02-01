@@ -85,9 +85,10 @@ class ProductListView(PicotableListView):
 
     def get_primary_image(self, instance):
         if instance.product.primary_image:
-            return "<img src='/media/%s'>" % instance.product.primary_image.get_thumbnail()
-        else:
-            return "<img src='%s'>" % static("shuup_admin/img/no_image_thumbnail.png")
+            thumbnail = instance.product.primary_image.get_thumbnail()
+            if thumbnail:
+                return "<img src='/media/{}'>".format(thumbnail)
+        return "<img src='%s'>" % static("shuup_admin/img/no_image_thumbnail.png")
 
     def get_queryset(self):
         filter = self.get_filter()
