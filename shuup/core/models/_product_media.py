@@ -150,7 +150,7 @@ class ProductMedia(TranslatableModel):
 
         try:
             return thumbnailer.get_thumbnail(thumbnail_options=kwargs)
-        except InvalidImageFormatError:
+        except (InvalidImageFormatError, OSError):
             return None
 
 
