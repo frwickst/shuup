@@ -12,6 +12,12 @@ Unrealeased
 Core
 ~~~~
 
+- Section receives the request object
+- API: added nearby filter for products
+- API: added nearby filter for shops
+- API: add address endpoint
+- API: add person contact endpoint
+- API: add user register endpoint
 - Add `created_on` and `modified_on` fields for shop
 - Make shop identifier max length to 128 characters
 - Add `staff_members` manytomanyfield for shop
