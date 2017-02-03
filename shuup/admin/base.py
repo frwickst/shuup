@@ -101,6 +101,10 @@ class AdminModule(object):
         """
         return None
 
+    def set_request(self, request):
+        """Set the request attribute if needed by other methods"""
+        self.request = request
+
 
 class Resolvable(object):
     _url = ""  # Set on instance level.

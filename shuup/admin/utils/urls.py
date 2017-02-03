@@ -176,7 +176,7 @@ class NoModelUrl(ValueError):
     pass
 
 
-def get_model_url(object, kind="detail", user=None, required_permissions=None):
+def get_model_url(object, kind="detail", user=None, required_permissions=None, request=None):
     """
     Get a an admin object URL for the given object or object class by
     interrogating each admin module.
@@ -198,6 +198,8 @@ def get_model_url(object, kind="detail", user=None, required_permissions=None):
     :rtype: str
     """
     for module in get_modules():
+        if request:
+            module.set_request(request)
         url = module.get_model_url(object, kind)
         if not url:
             continue
