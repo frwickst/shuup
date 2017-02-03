@@ -84,5 +84,5 @@ class CategoryModule(AdminModule):
     def get_required_permissions(self):
         return ["shuup.view_category"]
 
-    def get_model_url(self, object, kind):
+    def get_model_url(self, object, kind, request=None):
         return derive_model_url(Category, "shuup_admin:category", object, kind)

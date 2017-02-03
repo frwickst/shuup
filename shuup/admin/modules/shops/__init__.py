@@ -66,5 +66,5 @@ class ShopModule(AdminModule):
     def get_required_permissions(self):
         return ["shuup.view_shop"]
 
-    def get_model_url(self, object, kind):
+    def get_model_url(self, object, kind, request=None):
         return derive_model_url(Shop, "shuup_admin:shop", object, kind)

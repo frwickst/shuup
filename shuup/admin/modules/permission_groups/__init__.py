@@ -40,5 +40,5 @@ class PermissionGroupModule(AdminModule):
     def get_required_permissions(self):
         return ["shuup.change_permissiongroup"]
 
-    def get_model_url(self, object, kind):
+    def get_model_url(self, object, kind, request=None):
         return derive_model_url(PermissionGroup, "shuup_admin:permission_group", object, kind)

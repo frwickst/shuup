@@ -73,7 +73,7 @@ class TaxModule(AdminModule):
     def get_required_permissions(self):
         return get_permissions_from_urls(self.get_urls())
 
-    def get_model_url(self, object, kind):
+    def get_model_url(self, object, kind, request=None):
         return (
             derive_model_url(Tax, "shuup_admin:tax", object, kind) or
             derive_model_url(TaxClass, "shuup_admin:tax_class", object, kind) or

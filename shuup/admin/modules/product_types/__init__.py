@@ -42,5 +42,5 @@ class ProductTypeModule(AdminModule):
     def get_required_permissions(self):
         return ["shuup.change_producttype"]
 
-    def get_model_url(self, object, kind):
+    def get_model_url(self, object, kind, request=None):
         return derive_model_url(ProductType, "shuup_admin:product_type", object, kind)

@@ -294,7 +294,7 @@ class OrderEditView(CreateOrUpdateView):
             "product": {
                 "text": product.name,
                 "id": product.id,
-                "url": get_model_url(product)
+                "url": get_model_url(product, request=request)
             }
         }
 

@@ -42,5 +42,5 @@ class SupplierModule(AdminModule):
     def get_required_permissions(self):
         return ["shuup.view_supplier"]
 
-    def get_model_url(self, object, kind):
+    def get_model_url(self, object, kind, request=None):
         return derive_model_url(Supplier, "shuup_admin:supplier", object, kind)

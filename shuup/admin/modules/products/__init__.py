@@ -138,7 +138,7 @@ class ProductModule(AdminModule):
         actions = [
             {
                 "text": _("New product"),
-                "url": self.get_model_url(ShopProduct, "new")
+                "url": self.get_model_url(ShopProduct, "new", request)
             }
         ]
         if "shuup.importer" in settings.INSTALLED_APPS:
@@ -159,9 +159,9 @@ class ProductModule(AdminModule):
     def get_required_permissions(self):
         return ["shuup.view_shopproduct"]
 
-    def get_model_url(self, object, kind):
+    def get_model_url(self, object, kind, request):
         if isinstance(object, Product):
-            shop = self.request.session.get("admin_shop")
+            shop = request.session.get("admin_shop")
             object = object.get_shop_instance(shop)
         return derive_model_url(ShopProduct, "shuup_admin:shop_product", object, kind)
 
