@@ -34,10 +34,11 @@ def apply_request_middleware(request, **attrs):
         except MiddlewareNotUsed:
             continue
 
+        for key, value in attrs.items():
+            setattr(request, key, value)
+
         if hasattr(mw_instance, 'process_request'):
             mw_instance.process_request(request)
-    for key, value in attrs.items():
-        setattr(request, key, value)
     return request
 
 
