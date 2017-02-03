@@ -60,7 +60,7 @@ class ServiceModule(AdminModule):
     def get_required_permissions(self):
         return self.required_permissions_for_module
 
-    def get_model_url(self, object, kind, request=None):
+    def get_model_url(self, object, kind):
         return derive_model_url(self.model, self.url_name_prefix, object, kind)
 
 

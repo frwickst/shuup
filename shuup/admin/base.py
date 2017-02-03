@@ -85,7 +85,7 @@ class AdminModule(object):
         """
         return ()
 
-    def get_model_url(self, object, kind, request=None):
+    def get_model_url(self, object, kind):
         """
         Retrieve an admin URL for the given object of the kind `kind`.
 
@@ -96,8 +96,6 @@ class AdminModule(object):
         :type object: django.db.models.Model
         :param kind: URL kind. Currently "detail", "list" or "new".
         :type kind: str
-        :param request: Optional request, might be needed for queries
-        :type request: django.http.HttpRequest
         :return: The reversed URL or none.
         :rtype: str|None
         """

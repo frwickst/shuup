@@ -55,5 +55,5 @@ class ServiceProviderModule(AdminModule):
     def get_required_permissions(self):
         return ["shuup.view_serviceprovider"]
 
-    def get_model_url(self, object, kind, request=None):
+    def get_model_url(self, object, kind):
         return derive_model_url(ServiceProvider, "shuup_admin:service_provider", object, kind)

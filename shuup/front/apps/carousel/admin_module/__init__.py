@@ -56,5 +56,5 @@ class CarouselModule(AdminModule):
             get_default_model_permissions(Product)
         )
 
-    def get_model_url(self, object, kind, request=None):
+    def get_model_url(self, object, kind):
         return derive_model_url(Carousel, "shuup_admin:carousel", object, kind)
