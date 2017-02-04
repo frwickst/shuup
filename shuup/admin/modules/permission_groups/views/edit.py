@@ -56,7 +56,7 @@ class PermissionGroupForm(forms.ModelForm):
             for module_permission in get_permissions_from_urls(module.get_urls()):
                 field = forms.BooleanField(
                     initial=bool(module_permission == initial_permissions),
-                    label=permission_code_to_name[module_permission],
+                    label=permission_code_to_name.get(module_permission, "missing label FIXME FIXME"),
                     required=False
                 )
                 self.module_permissions[module.name].append(module_permission)
@@ -80,6 +80,12 @@ class PermissionGroupForm(forms.ModelForm):
             for perm in self.instance.permissions.all():
                 name, module, _ = perm.natural_key()
                 permissions.add("%s.%s" % (module, name))
+        return permissions
+
+    def _get_required_permissions(self, modules):
+        permissions = set()
+        for module in [m for m in get_modules() if m.name in modules]:
+            permissions.update(set(module.get_required_permissions()))
         return permissions
 
     def clean_members(self):

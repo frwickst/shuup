@@ -99,7 +99,10 @@ def get_permission_string_for_model(model, perm):
     model_permission = validate_and_get_permission(model, perm)
     if not model_permission:
         return
-    return "%s.%s_%s" % (model._meta.app_label, model_permission, model._meta.model_name)
+    permission = "%s.%s" % (model._meta.app_label, model_permission)
+    if not permission.endswith(model._meta.model_name):
+        permission += "_%s" % model._meta.model_name
+    return permission
 
 
 def validate_and_get_permission(model, perm):

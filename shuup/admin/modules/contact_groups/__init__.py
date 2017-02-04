@@ -49,7 +49,7 @@ class ContactGroupModule(AdminModule):
         ]
 
     def get_required_permissions(self):
-        return ["view_contactgroup"]
+        return ["shuup.view_contactgroup"]
 
     def get_model_url(self, object, kind):
         return derive_model_url(ContactGroup, "shuup_admin:contact_group", object, kind)
