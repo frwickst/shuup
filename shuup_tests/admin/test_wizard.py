@@ -98,7 +98,7 @@ def test_shipping_method_wizard_pane(rf, admin_user, settings):
     fields["shipping_method_base-providers"] = "manual_shipping"
     fields["manual_shipping-service_name"] = "test"
 
-    request = rf.post("/", data=fields)
+    request = apply_request_middleware(rf.post("/", data=fields), user=admin_user)
     response = WizardView.as_view()(request)
     assert response.status_code == 200
     assert ServiceProvider.objects.count() == 1
@@ -120,7 +120,7 @@ def test_payment_method_wizard_pane(rf, admin_user, settings):
     fields["payment_method_base-providers"] = "manual_payment"
     fields["manual_payment-service_name"] = "test"
 
-    request = rf.post("/", data=fields)
+    request = apply_request_middleware(rf.post("/", data=fields), user=admin_user)
     response = WizardView.as_view()(request)
     assert response.status_code == 200
     assert ServiceProvider.objects.count() == 1
