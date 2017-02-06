@@ -83,7 +83,7 @@ def test_product_edit_view_with_params(rf, admin_user):
             assert (name in response.rendered_content)  # it's probable the name is there
 
 @pytest.mark.django_db
-def test_product_media_bulk_adder(rf):
+def test_product_media_bulk_adder(rf, admin_user):
     shop = get_default_shop()
     product = create_product("test-product", shop)
     f = File.objects.create(name="test")
@@ -92,42 +92,51 @@ def test_product_media_bulk_adder(rf):
 
     view_func = ProductMediaBulkAdderView.as_view()
     # bad request - no params
-    request = apply_request_middleware(rf.post("/"))
+    request = apply_request_middleware(rf.post("/"), user=admin_user)
+    request.session['admin_shop'] = shop
     response = view_func(request, pk=product.pk)
     assert response.status_code == 400
     assert not ProductMedia.objects.count()
     # bad request - invalid shop
     request = apply_request_middleware(rf.post("/", {"shop_id": 0, "file_ids": [f.id], "kind": "media"}))
+    request.session['admin_shop'] = shop
     response = view_func(request, pk=product.pk)
     assert response.status_code == 400
     assert not ProductMedia.objects.count()
     # bad request - invalid product
     request = apply_request_middleware(rf.post("/", {"file_ids": [f.id], "kind": "media"}))
+    # FIXME FIXME find a better way to set admin_shop variable
+    request.session['admin_shop'] = shop
     response = view_func(request, pk=100)
     assert response.status_code == 400
     assert not ProductMedia.objects.count()
     # bad request - invalid kind
     request = apply_request_middleware(rf.post("/", {"file_ids": [f.id], "kind": "test"}))
+    request.session['admin_shop'] = shop
     response = view_func(request, pk=product.pk)
     assert response.status_code == 400
     assert not ProductMedia.objects.count()
     # bad request - invalid file
     request = apply_request_middleware(rf.post("/", {"file_ids": [0], "kind": "media"}))
+    request.session['admin_shop'] = shop
     response = view_func(request, pk=product.pk)
     assert response.status_code == 400
     assert not ProductMedia.objects.count()
     # bad request - empty file array
     request = apply_request_middleware(rf.post("/", {"file_ids": [], "kind": "media"}))
+    request.session['admin_shop'] = shop
     response = view_func(request, pk=product.pk)
     assert response.status_code == 400
     assert not ProductMedia.objects.count()
     # add one file
     request = apply_request_middleware(rf.post("/", {"file_ids":[f.id], "kind": "media"}))
+    request.session['admin_shop'] = shop
     response = view_func(request, pk=product.pk)
     assert response.status_code == 200
     assert ProductMedia.objects.filter(product_id=product.pk, file_id=f.id, kind=ProductMediaKind.GENERIC_FILE).exists()
     # add two files but one already exists
     request = apply_request_middleware(rf.post("/", {"file_ids":[f.id, f2.id], "kind": "media"}))
+    request.session['admin_shop'] = shop
     response = view_func(request, pk=product.pk)
     assert response.status_code == 200
     assert ProductMedia.objects.count() == 2
