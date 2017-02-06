@@ -116,7 +116,7 @@ class CreateOrUpdateView(UpdateView):
         is_new = (not self.object.pk)
         self.save_form(form)
         if is_new:
-            object_created.send(sender=type(self.object), object=self.object)
+            object_created.send(sender=type(self.object), object=self.object, request=self.request)
         add_create_or_change_message(self.request, self.object, is_new=is_new)
         return HttpResponseRedirect(self.get_success_url())
 
