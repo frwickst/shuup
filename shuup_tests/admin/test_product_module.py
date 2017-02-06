@@ -40,7 +40,7 @@ def test_product_module_search(rf, admin_user):
                           ProductTypeModule, ManufacturerModule, PaymentMethodModule, ShippingMethodModule]):
         with admin_only_urls():
             default_product = get_default_product()
-            model_url = get_model_url(default_product)
+            model_url = get_model_url(default_product, request=request)
             sku = default_product.sku
             assert any(sr.url == model_url for sr in get_search_results(request, query=sku))  # Queries work
             assert any(sr.is_action for sr in get_search_results(request, query=sku[:5]))  # Actions work
