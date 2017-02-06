@@ -108,7 +108,7 @@ class SaveFormPartsMixin(object):
                 for form_part in form_parts:
                     form_part.object = self.object
         if is_new:
-            object_created.send(sender=type(self.object), object=self.object)
+            object_created.send(sender=type(self.object), object=self.object, request=self.request)
         add_create_or_change_message(self.request, self.object, is_new)
 
         if self.request.GET.get("redirect") and not self.request.POST.get("__next"):
