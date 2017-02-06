@@ -9,7 +9,7 @@ from django.conf import settings
 from django.core import urlresolvers
 from django.core.exceptions import MiddlewareNotUsed
 from django.utils.module_loading import import_string
-from django.utils.translation import activate
+from django.utils.translation import activate, get_language
 
 from shuup import configuration
 from shuup.testing.factories import get_default_shop
@@ -29,6 +29,8 @@ def apply_request_middleware(request, **attrs):
     """
     for middleware_path in settings.MIDDLEWARE_CLASSES:
         mw_class = import_string(middleware_path)
+        current_language = get_language()
+
         try:
             mw_instance = mw_class()
         except MiddlewareNotUsed:
@@ -39,6 +41,8 @@ def apply_request_middleware(request, **attrs):
 
         if hasattr(mw_instance, 'process_request'):
             mw_instance.process_request(request)
+
+        activate(current_language)
     return request
 
 
