@@ -124,7 +124,7 @@ def get_permission_string_for_object(obj, perm):
 
 
 def filter_queryset(request, perm, queryset):
-    if getattr(request.user.is_superuser, "is_superuser", False) or not settings.SHUUP_CHECK_PER_OBJECT_PERMISSIONS:
+    if getattr(request.user, "is_superuser", False) or not settings.SHUUP_CHECK_PER_OBJECT_PERMISSIONS:
         return queryset
 
     app_label, codename = perm.split(".", 1)
