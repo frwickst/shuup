@@ -15,3 +15,16 @@
     {% endcall %}
 {% endblock %}
 
+{% block extra_js %}
+    <script>
+        (function() {
+            $("input[type='checkbox']").on("change", function() {
+                var name = $(this).attr('name');
+                var desiredValue = $(this).is(":checked")
+                $("input[name='" + name + "']").each(function() {
+                    $(this).attr("checked", desiredValue);
+                })
+            })
+        })();
+    </script>
+{% endblock %}

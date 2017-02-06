@@ -7,6 +7,8 @@
 # LICENSE file in the root directory of this source tree.
 from __future__ import unicode_literals
 
+import six
+
 from collections import defaultdict, OrderedDict
 
 from django import forms
@@ -45,17 +47,15 @@ class PermissionGroupForm(forms.ModelForm):
         )
         members_field.widget.choices = [(member.pk, force_text(member)) for member in initial_members]
         self.fields["members"] = members_field
-
         permission_code_to_name = {}
         for permission in Permission.objects.all():
             permission_code_to_name[
                 "%s.%s" % (permission.content_type.app_label, permission.codename)] = permission.name
-
         self.module_permissions = defaultdict(list)
         for module in self._get_module_choices():
             for module_permission in get_permissions_from_urls(module.get_urls()):
                 field = forms.BooleanField(
-                    initial=bool(module_permission == initial_permissions),
+                    initial=bool(module_permission in initial_permissions),
                     label=permission_code_to_name.get(module_permission, "missing label FIXME FIXME"),
                     required=False
                 )
@@ -82,34 +82,22 @@ class PermissionGroupForm(forms.ModelForm):
                 permissions.add("%s.%s" % (module, name))
         return permissions
 
-    def _get_required_permissions(self, modules):
-        permissions = set()
-        for module in [m for m in get_modules() if m.name in modules]:
-            permissions.update(set(module.get_required_permissions()))
-        return permissions
-
     def clean_members(self):
         members = self.cleaned_data.get("members", [])
-
         return get_user_model().objects.filter(pk__in=members).all()
-
-    def clean(self):
-        cleaned_data = super(PermissionGroupForm, self).clean()
-
-        permissions = set()
-        modules = cleaned_data.pop("modules", [])
-        required_permissions = self._get_required_permissions(modules)
-
-        for permission in required_permissions:
-            permissions.add(get_permission_object_from_string(permission))
-
-        cleaned_data["required_permissions"] = permissions
-
-        return cleaned_data
 
     def save(self):
         obj = super(PermissionGroupForm, self).save()
-        obj.permissions = set(self.cleaned_data["required_permissions"])
+        permissions = set()
+        for field_name, value in six.iteritems(self.cleaned_data):
+            if field_name in ["members", "name"]:
+                continue
+            if not value:
+                continue
+            app_label, code_name = field_name.split(".", 1)
+            print(app_label, code_name)
+            permissions.add(Permission.objects.get(content_type__app_label=app_label, codename=code_name).id)
+        obj.permissions = permissions
         obj.user_set = set(self.cleaned_data["members"])
         return obj
 
