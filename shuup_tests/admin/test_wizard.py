@@ -128,7 +128,7 @@ def test_payment_method_wizard_pane(rf, admin_user, settings):
     assert CustomPaymentProcessor.objects.first().name == "Manual"
     assert PaymentMethod.objects.count() == 1
     assert PaymentMethod.objects.first().name == "test"
-    assert_redirect_to_dashboard(rf)
+    assert_redirect_to_dashboard(rf, admin_user)
 
 
 @pytest.mark.django_db
@@ -144,7 +144,7 @@ def test_xtheme_wizard_pane(rf, admin_user, settings):
             assert get_current_theme() == None
             fields = _extract_fields(rf, admin_user)
             fields["theme-activate"] = FauxTheme.identifier
-            request = rf.post("/", data=fields)
+            request = apply_request_middleware(rf.post("/", data=fields), user=admin_user)
             response = WizardView.as_view()(request)
             assert isinstance(get_current_theme(), FauxTheme)
-            assert_redirect_to_dashboard(rf)
+            assert_redirect_to_dashboard(rf, admin_user)
