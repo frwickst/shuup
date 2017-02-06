@@ -101,6 +101,7 @@ def test_edit_view_adding_messages_to_form_group(rf, admin_user):
 @pytest.mark.django_db
 def test_product_edit_view(rf, admin_user, settings):
     shop = get_default_shop()  # obvious prerequisite
+    shop.staff_members.add(admin_user)
     product = get_default_product()
     shop_product = product.get_shop_instance(shop)
     cat = CategoryFactory()
@@ -158,6 +159,8 @@ def test_product_edit_view(rf, admin_user, settings):
     response = view(request, pk=product.pk)
 
     shop_product = ShopProduct.objects.first()
+    assert shop_product.primary_category
+
     if settings.SHUUP_AUTO_SHOP_PRODUCT_CATEGORIES:
         assert shop_product.categories.count() == 1
         assert shop_product.categories.first() == cat
