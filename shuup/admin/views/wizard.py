@@ -24,7 +24,7 @@ from shuup.utils.iterables import first
 
 
 class WizardFormDefMixin(object):
-    def __init__(self,  **kwargs):
+    def __init__(self, **kwargs):
         self.context = kwargs.pop("context", {})
         self.extra_js = kwargs.pop("extra_js", "")
         super(WizardFormDefMixin, self).__init__(**kwargs)
