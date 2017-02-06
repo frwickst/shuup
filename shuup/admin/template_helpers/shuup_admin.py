@@ -131,6 +131,6 @@ def model_url(context, model, kind="detail", default=None):
     """
     user = context.get("user")
     try:
-        return get_model_url(model, kind=kind, user=user, request=context["request"])
+        return get_model_url(model, kind=kind, user=user, request=context.get("request"))
     except NoModelUrl:
         return default
