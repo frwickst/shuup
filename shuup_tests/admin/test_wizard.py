@@ -36,18 +36,18 @@ def _extract_fields(rf, user):
     return extract_form_fields(soup.find("form"))
 
 
-def assert_redirect_to_dashboard(rf):
-    request = apply_request_middleware(rf.get("/"))
+def assert_redirect_to_dashboard(rf, user):
+    request = apply_request_middleware(rf.get("/"), user=user)
     response = WizardView.as_view()(request)
     assert response.status_code == 302
     assert response["Location"] == reverse("shuup_admin:dashboard")
 
 
 @pytest.mark.django_db
-def test_get_wizard_no_panes(rf, settings):
+def test_get_wizard_no_panes(rf, settings, admin_user):
     get_default_shop()
     settings.SHUUP_SETUP_WIZARD_PANE_SPEC = []
-    assert_redirect_to_dashboard(rf)
+    assert_redirect_to_dashboard(rf, admin_user)
 
 
 @pytest.mark.django_db
@@ -84,7 +84,7 @@ def test_shop_wizard_pane(rf, admin_user, settings):
     assert shop.contact_address
     assert shop.currency == "USD"
     assert TaxClass.objects.exists()
-    assert_redirect_to_dashboard(rf)
+    assert_redirect_to_dashboard(rf, admin_user)
 
 
 @pytest.mark.django_db
@@ -106,7 +106,7 @@ def test_shipping_method_wizard_pane(rf, admin_user, settings):
     assert CustomCarrier.objects.first().name == "Manual"
     assert ShippingMethod.objects.count() == 1
     assert ShippingMethod.objects.first().name == "test"
-    assert_redirect_to_dashboard(rf)
+    assert_redirect_to_dashboard(rf, admin_user)
 
 
 @pytest.mark.django_db
