@@ -31,8 +31,14 @@ class ShuupAdminMiddleware(object):
                 queryset = queryset.filter(staff_members=request.user)
             request.session.setdefault("admin_shops", queryset)
 
+        active_shop = request.session.get("admin_shop")
+        if active_shop:
+            active_shop_id = active_shop.id
+        else:
+            active_shop_id = None
+
         if not is_superuser and Shop.objects.filter(
-                id=request.session.get("admin_shop").id, staff_members__id=request.user.id).exists():
+                id=active_shop_id, staff_members__id=request.user.id).exists():
             raise ImproperlyConfigured("The user is not linked to the current shop correctly.")
 
     @classmethod
