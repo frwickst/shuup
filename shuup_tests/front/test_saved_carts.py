@@ -69,7 +69,7 @@ def test_save_cart_errors(rf, regular_user):
     customer = get_person_contact(regular_user)
     request = apply_request_middleware(rf.post("/", {
         "title": ""
-    }), customer=customer)
+    }), customer=customer, user=regular_user)
     response = CartSaveView.as_view()(request)
     data = json.loads(response.content.decode("utf8"))
     assert response.status_code == 400
@@ -77,7 +77,7 @@ def test_save_cart_errors(rf, regular_user):
 
     request = apply_request_middleware(rf.post("/", {
         "title": "test"
-    }), customer=customer)
+    }), customer=customer, user=regular_user)
     response = CartSaveView.as_view()(request)
     data = json.loads(response.content.decode("utf8"))
     assert response.status_code == 400
