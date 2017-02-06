@@ -80,6 +80,7 @@ def test_ajax_select_view_with_products(rf, admin_user):
     PersonContact, CompanyContact
 ])
 def test_ajax_select_view_with_contacts(rf, contact_cls, admin_user):
+    shop = get_default_shop()
     view = MultiselectAjaxView.as_view()
     model_name = "shuup.%s" % contact_cls._meta.model_name
     results = _get_search_results(rf, view, model_name, "some str", admin_user)
@@ -108,6 +109,7 @@ def test_ajax_select_view_with_contacts(rf, contact_cls, admin_user):
 @pytest.mark.django_db
 def test_ajax_select_view_with_categories(rf, admin_user):
     activate("en")
+    shop = get_default_shop()
     view = MultiselectAjaxView.as_view()
     results = _get_search_results(rf, view, "shuup.Category", "some str", admin_user)
     assert len(results) == 0
@@ -122,21 +124,22 @@ def test_ajax_select_view_with_categories(rf, admin_user):
 
 
 @pytest.mark.django_db
-def test_multiselect_inactive_users_and_contacts(rf, regular_user):
+def test_multiselect_inactive_users_and_contacts(rf, regular_user, admin_user):
     """
     Make sure inactive users and contacts are filtered from search results.
     """
+    shop = get_default_shop()
     view = MultiselectAjaxView.as_view()
     assert "joe" in regular_user.username
 
-    results = _get_search_results(rf, view, "auth.User", "joe", regular_user)
+    results = _get_search_results(rf, view, "auth.User", "joe", admin_user)
     assert len(results) == 1
     assert results[0].get("id") == regular_user.id
     assert results[0].get("name") == regular_user.username
 
     contact = PersonContact.objects.create(first_name="Joe", last_name="Somebody")
 
-    results = _get_search_results(rf, view, "shuup.PersonContact", "joe", regular_user)
+    results = _get_search_results(rf, view, "shuup.PersonContact", "joe", admin_user)
 
     assert len(results) == 1
     assert results[0].get("id") == contact.id
@@ -145,6 +148,6 @@ def test_multiselect_inactive_users_and_contacts(rf, regular_user):
     contact.is_active = False
     contact.save()
 
-    results = _get_search_results(rf, view, "shuup.PersonContact", "joe", regular_user)
+    results = _get_search_results(rf, view, "shuup.PersonContact", "joe", admin_user)
 
     assert len(results) == 0
