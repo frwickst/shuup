@@ -28,8 +28,8 @@ class CategoryListView(PicotableListView):
         Column(
             "status", _(u"Status"),
             filter_config=ChoicesFilter(
-               choices=CategoryStatus.choices,
-               default=CategoryStatus.VISIBLE.value
+                choices=CategoryStatus.choices,
+                default=CategoryStatus.VISIBLE.value
             )
         ),
         Column("visibility", _(u"Visibility"), filter_config=ChoicesFilter(choices=CategoryVisibility.choices)),

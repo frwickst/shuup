@@ -55,7 +55,6 @@ class CategoryBaseForm(ShuupAdminForm):
         if not settings.SHUUP_ENABLE_MULTIPLE_SHOPS:
             self.fields["shops"].disabled = True
 
-
     def clean_shops(self):
         shops = self.cleaned_data["shops"]
         if settings.SHUUP_ENABLE_MULTIPLE_SHOPS:

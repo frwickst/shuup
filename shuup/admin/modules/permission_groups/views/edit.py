@@ -7,10 +7,9 @@
 # LICENSE file in the root directory of this source tree.
 from __future__ import unicode_literals
 
-import six
-
 from collections import defaultdict, OrderedDict
 
+import six
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group as PermissionGroup
@@ -20,9 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from shuup.admin.forms.fields import Select2MultipleField
 from shuup.admin.module_registry import get_modules
-from shuup.admin.utils.permissions import (
-    get_permission_object_from_string, get_permissions_from_urls
-)
+from shuup.admin.utils.permissions import get_permissions_from_urls
 from shuup.admin.utils.views import CreateOrUpdateView
 
 
