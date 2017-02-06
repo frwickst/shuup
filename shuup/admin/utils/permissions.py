@@ -99,6 +99,10 @@ def get_permission_string_for_model(model, perm):
     model_permission = validate_and_get_permission(model, perm)
     if not model_permission:
         return
+
+    # We sometimes end up with a permission like `view_shopproduct_shopproduct`
+    # This is primarily due to how permission names are defined in the models
+    # We are likely sending the wrong `perm` parameter value.
     permission = "%s.%s" % (model._meta.app_label, model_permission)
     if not permission.endswith(model._meta.model_name):
         permission += "_%s" % model._meta.model_name
