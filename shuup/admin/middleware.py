@@ -37,7 +37,7 @@ class ShuupAdminMiddleware(object):
 
     @classmethod
     def refresh_on_logout(cls, request, **kwargs):
-        request.session.pop("admin_shops")
+        request.session.pop("admin_shops", None)
 
 
 if (
