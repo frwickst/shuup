@@ -228,7 +228,6 @@ SHUUP_SIMPLE_SEARCH_LIMIT = 150
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'shuup_multivendor_permissions.backends.MultivendorPermissionBackend',
 )
 
 
