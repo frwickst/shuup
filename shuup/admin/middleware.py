@@ -22,13 +22,13 @@ class ShuupAdminMiddleware(object):
             return
 
         if not request.session.get("admin_shop"):
-            queryset = Shop.objects
+            queryset = Shop.objects.prefetch_related('translations')
             if not is_superuser:
                 queryset = queryset.filter(staff_members__id=user.id)
             request.session.setdefault("admin_shop", queryset.first())
 
         if not request.session.get("admin_shops"):
-            queryset = Shop.objects.all()
+            queryset = Shop.objects.prefetch_related('translations').all()
             if not is_superuser:
                 queryset = queryset.filter(staff_members=user)
             request.session.setdefault("admin_shops", queryset)
