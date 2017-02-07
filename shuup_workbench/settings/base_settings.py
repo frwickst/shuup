@@ -67,7 +67,6 @@ INSTALLED_APPS = add_enabled_addons(SHUUP_ENABLED_ADDONS_FILE, [
     'django_countries',
     'django_jinja',
     'filer',
-    'permission',
     'registration',
     'rest_framework',
     'rest_framework_swagger'
@@ -229,10 +228,9 @@ SHUUP_SIMPLE_SEARCH_LIMIT = 150
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'permission.backends.PermissionBackend',
+    'shuup_multivendor_permissions.backends.MultivendorPermissionBackend',
 )
 
-PERMISSION_CHECK_TEMPLATES_OPTIONS_BUILTINS = False
 
 if os.environ.get("SHUUP_WORKBENCH_DISABLE_MIGRATIONS") == "1":
     from .utils import DisableMigrations
