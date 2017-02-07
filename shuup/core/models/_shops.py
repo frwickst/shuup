@@ -28,6 +28,11 @@ def _get_default_currency():
     return settings.SHUUP_HOME_CURRENCY
 
 
+class ShopManager(models.Manager):
+    def get_for_user(self, user):
+        return self.get_queryset().filter(staff_members=user)
+
+
 class ShopStatus(Enum):
     DISABLED = 0
     ENABLED = 1
@@ -90,6 +95,8 @@ class Shop(ChangeProtected, TranslatableShuupModel):
             )
         )
     )
+
+    objects = ShopManager()
 
     class Meta:
         permissions = (('view_shop', 'Can view shops'),)
