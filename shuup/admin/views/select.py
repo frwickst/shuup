@@ -77,6 +77,8 @@ class MultiselectAjaxView(TemplateView):
         qs = cls.objects.all()
         if hasattr(cls.objects, "all_except_deleted"):
             qs = cls.objects.all_except_deleted()
+        if hasattr(cls.objects, "get_for_user"):
+            qs = cls.objects.get_for_user(self.request.user)
         self.init_search_fields(cls)
         if not self.search_fields:
             return [{"id": None, "name": _("Couldn't get selections for %s.") % model_name}]
