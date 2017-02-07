@@ -180,9 +180,10 @@ class OrderEditView(CreateOrUpdateView):
             shop_queryset = shop_queryset.filter(staff_members=self.request.user)
 
         shops = [encode_shop(shop) for shop in shop_queryset]
+        shop = self.request.session['admin_shop']
         customer_id = self.request.GET.get("contact_id")
-        shipping_methods = ShippingMethod.objects.enabled()
-        payment_methods = PaymentMethod.objects.enabled()
+        shipping_methods = ShippingMethod.objects.for_shop(shop).enabled()
+        payment_methods = PaymentMethod.objects.for_shop(shop).enabled()
         return {
             "shops": shops,
             "countryDefault": settings.SHUUP_ADDRESS_HOME_COUNTRY,
