@@ -100,7 +100,6 @@ class PermissionGroupForm(forms.ModelForm):
             if not value:
                 continue
             app_label, code_name = field_name.split(".", 1)
-            print(app_label, code_name)
             permissions.add(Permission.objects.get(content_type__app_label=app_label, codename=code_name).id)
         obj.permissions = permissions
         obj.user_set = set(self.cleaned_data["members"])
