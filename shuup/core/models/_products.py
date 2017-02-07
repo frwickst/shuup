@@ -135,9 +135,9 @@ class ProductQuerySet(TranslatableQuerySet):
         else:
             from ._product_shops import ShopProductVisibility
             qs = root.all().exclude(Q(
-                        shop_products__shop=shop,
-                        shop_products__visibility=ShopProductVisibility.NOT_VISIBLE
-                    )).filter(
+                shop_products__shop=shop,
+                shop_products__visibility=ShopProductVisibility.NOT_VISIBLE
+            )).filter(
                 mode__in=(
                     ProductMode.NORMAL, ProductMode.PACKAGE_PARENT,
                     ProductMode.SIMPLE_VARIATION_PARENT, ProductMode.VARIABLE_VARIATION_PARENT
