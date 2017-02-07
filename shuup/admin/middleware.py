@@ -27,11 +27,10 @@ class ShuupAdminMiddleware(object):
                 queryset = queryset.filter(staff_members__id=user.id)
             request.session.setdefault("admin_shop", queryset.first())
 
-        if not request.session.get("admin_shops"):
-            queryset = Shop.objects.prefetch_related('translations').all()
-            if not is_superuser:
-                queryset = queryset.filter(staff_members=user)
-            request.session.setdefault("admin_shops", queryset)
+        queryset = Shop.objects.all()
+        if not is_superuser:
+            queryset = queryset.filter(staff_members=user)
+        request.session["shop_count"] = queryset.count()
 
         shop = request.session.get("admin_shop")
         if not shop:
@@ -42,7 +41,7 @@ class ShuupAdminMiddleware(object):
 
     @classmethod
     def refresh_on_logout(cls, request, **kwargs):
-        request.session.pop("admin_shops", None)
+        request.session.pop("admin_shop", None)
 
 
 if (
