@@ -164,6 +164,9 @@ class ShopProduct(MoneyPropped, models.Model):
         permissions = (('view_shopproduct', 'Can view shop products'),)
         unique_together = (("shop", "product",),)
 
+    def __str__(self):
+        return "{} ({})".format(self.product, self.shop)
+
     def save(self, *args, **kwargs):
         super(ShopProduct, self).save(*args, **kwargs)
         for supplier in self.suppliers.all():
