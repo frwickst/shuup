@@ -54,7 +54,7 @@ class ShipmentType(Enum):
 
 class ShipmentManager(models.Manager):
 
-    def all_except_deleted(self):
+    def all_except_deleted(self, shop=None, language=None):
         return self.exclude(status=ShipmentStatus.DELETED)
 
 
