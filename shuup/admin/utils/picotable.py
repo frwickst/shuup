@@ -20,7 +20,9 @@ from django.utils.translation import ugettext_lazy as _
 from easy_thumbnails.files import get_thumbnailer
 from filer.models import Image
 
-from shuup.admin.utils.permissions import filter_queryset, user_has_permission
+from shuup.admin.utils.permissions import (
+    filter_queryset, get_permission_string_for_model, user_has_permission
+)
 from shuup.admin.utils.urls import get_model_url, NoModelUrl
 from shuup.core.models import ProductMedia
 from shuup.utils.dates import try_parse_date
@@ -396,7 +398,15 @@ class Picotable(object):
         return queryset
 
     def get_data(self, query):
-        paginator = Paginator(filter_queryset(self.request, "change", self.process_queryset(query)), query["perPage"])
+        queryset = self.process_queryset(query)
+        paginator = Paginator(
+            filter_queryset(
+                self.request,
+                get_permission_string_for_model(queryset.model, "change"),
+                queryset
+            ),
+            query["perPage"]
+        )
         try:
             page = paginator.page(int(query["page"]))
         except EmptyPage:

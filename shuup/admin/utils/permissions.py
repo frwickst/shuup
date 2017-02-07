@@ -99,7 +99,14 @@ def get_permission_string_for_model(model, perm):
     model_permission = validate_and_get_permission(model, perm)
     if not model_permission:
         return
-    return "%s.%s_%s" % (model._meta.app_label, model_permission, model._meta.model_name)
+
+    # We sometimes end up with a permission like `view_shopproduct_shopproduct`
+    # This is primarily due to how permission names are defined in the models
+    # We are likely sending the wrong `perm` parameter value.
+    permission = "%s.%s" % (model._meta.app_label, model_permission)
+    if not permission.endswith(model._meta.model_name):
+        permission += "_%s" % model._meta.model_name
+    return permission
 
 
 def validate_and_get_permission(model, perm):
@@ -117,7 +124,7 @@ def get_permission_string_for_object(obj, perm):
 
 
 def filter_queryset(request, perm, queryset):
-    if getattr(request.user.is_superuser, "is_superuser", False) or not settings.SHUUP_CHECK_PER_OBJECT_PERMISSIONS:
+    if getattr(request.user, "is_superuser", False) or not settings.SHUUP_CHECK_PER_OBJECT_PERMISSIONS:
         return queryset
 
     app_label, codename = perm.split(".", 1)

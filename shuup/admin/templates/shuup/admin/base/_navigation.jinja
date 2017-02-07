@@ -17,11 +17,11 @@
 
 <a class="nav-btn shop-btn" href="{{ url("shuup_admin:home") }}" data-toggle="tooltip" data-placement="bottom" title="{% trans %}Go home{% endtrans %}"><i class="fa fa-home"></i></a>
 
-{% if request.session.admin_shops|length > 1 %}
-<select class="shop-changer">
-    {% for shop in request.session.admin_shops %}
-    <option value="{{ shop.pk }}"{% if shop == request.session.admin_shop %} selected{% endif %}>{{ shop.name }}</option>
-    {% endfor %}
+{% if shuup_admin.get_shop_count() > 1 %}
+<select class="shop-changer" data-model="shuup.Shop">
+    {% with shop = request.session.admin_shop %}
+      <option value="{{ shop.pk }}" selected>{{ shop.name }}</option>
+    {% endwith %}
 </select>
 {% endif %}
 

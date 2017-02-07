@@ -10,6 +10,7 @@ from django.contrib.auth.signals import user_logged_out
 from django.core.exceptions import ImproperlyConfigured
 
 from shuup.core.models import Shop
+from shuup.utils.excs import Problem
 
 
 class ShuupAdminMiddleware(object):
@@ -21,23 +22,21 @@ class ShuupAdminMiddleware(object):
             return
 
         if not request.session.get("admin_shop"):
-            queryset = Shop.objects
+            queryset = Shop.objects.prefetch_related('translations')
             if not is_superuser:
-                queryset = queryset.filter(staff_members=request.user)
+                queryset = queryset.filter(staff_members__id=user.id)
             request.session.setdefault("admin_shop", queryset.first())
-        if not request.session.get("admin_shops"):
-            queryset = Shop.objects.all()
-            if not is_superuser:
-                queryset = queryset.filter(staff_members=request.user)
-            request.session.setdefault("admin_shops", queryset)
 
-        if not is_superuser and Shop.objects.filter(
-                id=request.session.get("admin_shop").id, staff_members__id=request.user.id).exists():
+        shop = request.session.get("admin_shop")
+        if not shop:
+            raise Problem("The user is not linked to any shop.")
+
+        if not (is_superuser or Shop.objects.filter(id=shop.id, staff_members__id=user.id).exists()):
             raise ImproperlyConfigured("The user is not linked to the current shop correctly.")
 
     @classmethod
     def refresh_on_logout(cls, request, **kwargs):
-        request.session.pop("admin_shops")
+        request.session.pop("admin_shop", None)
 
 
 if (

@@ -294,7 +294,7 @@ class OrderEditView(CreateOrUpdateView):
             "product": {
                 "text": product.name,
                 "id": product.id,
-                "url": get_model_url(product)
+                "url": get_model_url(product, request=request)
             }
         }
 
@@ -402,7 +402,7 @@ class OrderEditView(CreateOrUpdateView):
                 creator=request.user,
                 ip_address=request.META.get("REMOTE_ADDR"),
             )
-            object_created.send(sender=Order, object=order)
+            object_created.send(sender=Order, object=order, request=request)
             messages.success(request, _("Order %(identifier)s created.") % vars(order))
         return JsonResponse({
             "success": True,
