@@ -63,8 +63,6 @@ def setup_wizard_complete(request):
         # setup wizard is only applicable in single shop mode
         return True
     shop = request.session.get("admin_shop")
-    if not shop:
-        raise ValueError("No shop set")
     complete = configuration.get(shop, "setup_wizard_complete")
     if complete is None:
         return not setup_wizard_visible_panes(shop)
