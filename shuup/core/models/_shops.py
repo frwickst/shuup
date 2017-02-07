@@ -30,7 +30,11 @@ def _get_default_currency():
 
 class ShopManager(models.Manager):
     def get_for_user(self, user):
-        return self.get_queryset().filter(staff_members=user)
+        qs = self.get_queryset()
+        if user.is_superuser:
+            return qs.all()
+        else:
+            return qs.filter(staff_members=user)
 
 
 class ShopStatus(Enum):
