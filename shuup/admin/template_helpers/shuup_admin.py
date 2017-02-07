@@ -143,7 +143,7 @@ def get_shop_count(context):
     Return the number of shops accessible by the currently logged in user
     """
     request = context["request"]
-    if not request or request.user.is_anonymous:
+    if not request or request.user.is_anonymous():
         return 0
     queryset = Shop.objects.all()
     if not request.user.is_superuser:
