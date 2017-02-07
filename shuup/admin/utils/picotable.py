@@ -20,7 +20,9 @@ from django.utils.translation import ugettext_lazy as _
 from easy_thumbnails.files import get_thumbnailer
 from filer.models import Image
 
-from shuup.admin.utils.permissions import filter_queryset, user_has_permission, get_permission_string_for_model
+from shuup.admin.utils.permissions import (
+    filter_queryset, get_permission_string_for_model, user_has_permission
+)
 from shuup.admin.utils.urls import get_model_url, NoModelUrl
 from shuup.core.models import ProductMedia
 from shuup.utils.dates import try_parse_date

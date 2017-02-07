@@ -27,11 +27,6 @@ class ShuupAdminMiddleware(object):
                 queryset = queryset.filter(staff_members__id=user.id)
             request.session.setdefault("admin_shop", queryset.first())
 
-        queryset = Shop.objects.all()
-        if not is_superuser:
-            queryset = queryset.filter(staff_members=user)
-        request.session["shop_count"] = queryset.count()
-
         shop = request.session.get("admin_shop")
         if not shop:
             raise Problem("The user is not linked to any shop.")
