@@ -30,7 +30,7 @@ class PermissionGroupForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PermissionGroupForm, self).__init__(*args, **kwargs)
-        initial_permissions = self._get_initial_permissions()
+        self.initial_permissions = self._get_initial_permissions()
         self.fields["name"].help_text = _("The permission group name.")
         initial_members = self._get_initial_members()
         members_field = Select2MultipleField(
@@ -44,20 +44,28 @@ class PermissionGroupForm(forms.ModelForm):
         )
         members_field.widget.choices = [(member.pk, force_text(member)) for member in initial_members]
         self.fields["members"] = members_field
-        permission_code_to_name = {}
+        self.permission_code_to_name = {}
         for permission in Permission.objects.all():
-            permission_code_to_name[
+            self.permission_code_to_name[
                 "%s.%s" % (permission.content_type.app_label, permission.codename)] = permission.name
         self.module_permissions = defaultdict(list)
         for module in self._get_module_choices():
-            for module_permission in get_permissions_from_urls(module.get_urls()):
-                field = forms.BooleanField(
-                    initial=bool(module_permission in initial_permissions),
-                    label=permission_code_to_name.get(module_permission, "missing label FIXME FIXME"),
-                    required=False
-                )
+            module_permissions = get_permissions_from_urls(module.get_urls())
+
+            if not module_permissions:
+                module_permissions = module.get_required_permissions()
+
+            for module_permission in module_permissions or []:
+                field = self.get_permission_field(module_permission)
                 self.module_permissions[module.name].append(module_permission)
                 self.fields[module_permission] = field
+
+    def get_permission_field(self, permission):
+        return forms.BooleanField(
+            initial=bool(permission in self.initial_permissions),
+            label=self.permission_code_to_name[permission],
+            required=False
+        )
 
     def get_module_permissions(self):
         return OrderedDict(sorted(self.module_permissions.items()))
