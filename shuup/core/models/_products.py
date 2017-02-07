@@ -181,6 +181,8 @@ class ProductQuerySet(TranslatableQuerySet):
 
     def all_except_deleted(self, shop=None, language=None):
         qs = (self.language(language) if language else self).exclude(deleted=True)
+        if shop:
+            qs = qs.filter(shop_products__shop=shop)
         qs = qs.select_related(*Product.COMMON_SELECT_RELATED)
         return qs
 
