@@ -44,7 +44,7 @@ class ShopViewSet(ProtectedModelViewSetMixin, PermissionHelperMixin, viewsets.Mo
     You can update only a set of attributes.
     """
 
-    queryset = Shop.objects.all()
+    queryset = Shop.objects.prefetch_related('translations', 'staff_members').all()
     serializer_class = ShopSerializer
 
     def get_view_name(self):
