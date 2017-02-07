@@ -22,7 +22,7 @@ class ShuupAdminMiddleware(object):
             return
 
         if not request.session.get("admin_shop"):
-            queryset = Shop.objects.prefetch_related('translations')
+            queryset = Shop.objects
             if not is_superuser:
                 queryset = queryset.filter(staff_members__id=user.id)
             request.session.setdefault("admin_shop", queryset.first())
