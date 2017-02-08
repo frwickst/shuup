@@ -179,8 +179,8 @@ class OrderEditView(CreateOrUpdateView):
         if getattr(self.request.user, "is_superuser", False):
             shop_queryset = shop_queryset.filter(staff_members=self.request.user)
 
-        shops = [encode_shop(shop) for shop in shop_queryset]
         shop = self.request.session['admin_shop']
+        shops = [encode_shop(shop)]
         customer_id = self.request.GET.get("contact_id")
         shipping_methods = ShippingMethod.objects.for_shop(shop).enabled()
         payment_methods = PaymentMethod.objects.for_shop(shop).enabled()
