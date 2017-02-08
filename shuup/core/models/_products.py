@@ -382,9 +382,9 @@ class Product(TaxableItem, AttributableMixin, TranslatableModel):
         if val is not None:
             return val
 
-        shop_inst = self.shop_products.get(shop=shop)
-        context_cache.set_cached_value(key, shop_inst)
-        return shop_inst
+        shop_product_inst = self.shop_products.get(shop=shop)
+        context_cache.set_cached_value(key, shop_product_inst)
+        return shop_product_inst
 
     def get_priced_children(self, context, quantity=1):
         """
