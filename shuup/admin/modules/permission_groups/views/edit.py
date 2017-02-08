@@ -63,7 +63,7 @@ class PermissionGroupForm(forms.ModelForm):
     def get_permission_field(self, permission):
         return forms.BooleanField(
             initial=bool(permission in self.initial_permissions),
-            label=self.permission_code_to_name[permission],
+            label=self.permission_code_to_name.get(permission, "Unnamed permission"),
             required=False
         )
 
