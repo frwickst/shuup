@@ -15,6 +15,7 @@ from enumfields import Enum, EnumIntegerField
 from filer.fields.image import FilerImageField
 from jsonfield import JSONField
 from parler.models import TranslatedFields
+from parler.managers import TranslatableManager
 
 from shuup.core.fields import CurrencyField, InternalIdentifierField
 from shuup.core.pricing import TaxfulPrice, TaxlessPrice
@@ -28,7 +29,7 @@ def _get_default_currency():
     return settings.SHUUP_HOME_CURRENCY
 
 
-class ShopManager(models.Manager):
+class ShopManager(TranslatableManager):
     def get_for_user(self, user):
         qs = self.get_queryset()
         if user.is_superuser:
