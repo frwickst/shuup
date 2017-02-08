@@ -364,10 +364,16 @@ class OrderEditView(CreateOrUpdateView):
             ]
         }
 
+    def get_request_body(self, request):
+        body = request.body.decode("utf-8")
+        if not body:
+            raise RuntimeError("No response received")
+        return body
+
     @transaction.atomic
     def _handle_source_data(self, request):
         self.object = self.get_object()
-        state = json.loads(request.body.decode("utf-8"))["state"]
+        state = json.loads(self.get_request_body(request))["state"]
         source = create_source_from_state(
             state,
             creator=request.user,
@@ -387,7 +393,7 @@ class OrderEditView(CreateOrUpdateView):
 
     @transaction.atomic
     def _handle_finalize(self, request):
-        state = json.loads(request.body.decode("utf-8"))["state"]
+        state = json.loads(self.get_request_body(request))["state"]
         self.object = self.get_object()
         if self.object.pk:  # Edit
             order = update_order_from_state(
