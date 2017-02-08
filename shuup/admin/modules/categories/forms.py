@@ -25,7 +25,6 @@ class CategoryBaseForm(ShuupAdminForm):
         model = Category
         fields = (
             "parent",
-            "shops",
             "status",
             "ordering",
             "visibility",
@@ -51,15 +50,6 @@ class CategoryBaseForm(ShuupAdminForm):
 
         # Exclude current category from parents, because it cannot be its own child anyways
         filter_form_field_choices(self.fields["parent"], (kwargs["instance"].pk,), invert=True)
-
-        if not settings.SHUUP_ENABLE_MULTIPLE_SHOPS:
-            self.fields["shops"].disabled = True
-
-    def clean_shops(self):
-        shops = self.cleaned_data["shops"]
-        if settings.SHUUP_ENABLE_MULTIPLE_SHOPS:
-            return shops if shops else [self.request.session.get("admin_shop")]
-        return [self.request.session.get("admin_shop")]
 
 
 class CategoryProductForm(forms.Form):
